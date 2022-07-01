@@ -1,0 +1,19 @@
+@startuml Level1
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Diagrama de contexto para o Sistema de Inscrições (Backpack)
+
+SHOW_PERSON_OUTLINE()
+
+Person(client, "Cliente Prospect", "Um cliente da IES, a realizar inscrições.")
+System(backpack, "Sistema de Inscrições (Backpack)", "Permite que o cliente visualize informações sobre suas inscrições, seus dados pessoais e faça novas inscrições.")
+Rel(client, backpack, "Vê e edita suas inscrições, dados pessoais e faz novas inscrições usando")
+System_Ext(email, "Sistema de E-mail", "O sistema de email interno SMTP do Google.")
+Rel(email, client, "Envia e-mail para")
+Rel(backpack, email, "Envia e-mail usando")
+System_Ext(educare, "Sistema de Gestão Acadêmica (Educare)", "Armazena todas as informações cadastrais de inscrições a serem publicadas.")
+Rel(backpack, educare, "Obtém informações das inscrições usando")
+System_Ext(getnet, "Sistema de Pagamentos (GetNet)")
+Rel(backpack, getnet, "Faz pagamentos usando")
+@enduml
