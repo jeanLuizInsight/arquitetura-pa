@@ -1,0 +1,28 @@
+@startuml Level2
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Diagrama de contêineres para o Sistema de Inscrições (Backpack)
+
+SHOW_PERSON_OUTLINE()
+LAYOUT_LEFT_RIGHT()
+
+Person(client, "Cliente Prospect", "Um cliente da IES, a realizar inscrições.")
+System_Boundary(backpack, "Sistema de Inscrições (Backpack)"){
+  Container(spa, "Aplicação de página única (SPA)","Javascript e Angular", "Fornece todas as funcionalidades do backpack aos clientes por meio do navegador da web.")
+  Container(api, "Aplicativo API", "Java e Spring Boot", "Fornece funcionalidade do backpack via API JSON/HTTPS.")
+  ContainerDb(db, "Banco de Dados", "MongoDB Schema", "Armazena informações de inscrições, dados pessoais, documentos, registros de acesso etc.")
+  
+  Rel(spa, api, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(api, db, "Lê e escreve em")
+}
+Rel(client, spa, "Vê seus dados pessoais, suas inscrições detalhadas, realiza nova inscrição e pagamento usando")
+
+System_Ext(email, "Sistema de E-mail", "O sistema de email interno SMTP do Google.")
+Rel(email, client, "Envia e-mail para")
+Rel(api, email, "Envia e-mail usando", "SMTP")
+System_Ext(educare, "Sistema de Gestão Acadêmica (Educare)", "Armazena todas as informações cadastrais de inscrições a serem publicadas.")
+Rel(api, educare, "Faz chamadas de API para", "JSON/HTTPS")
+System_Ext(getnet, "Sistema de Pagamentos (GetNet)")
+Rel(api, getnet, "Faz chamadas API para", "JSON/HTTPS")
+@enduml
