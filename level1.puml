@@ -6,7 +6,7 @@ title Diagrama de contexto para o Sistema de Inscrições (Backpack)
 
 SHOW_PERSON_OUTLINE()
 
-Person(client, "Cliente Prospect", "Um cliente da IES, a realizar inscrições.")
+Person(client, "Cliente", "Um cliente da IES, a realizar inscrições.")
 System(backpack, "Sistema de Inscrições (Backpack)", "Permite que o cliente visualize informações sobre suas inscrições, seus dados pessoais e faça novas inscrições.")
 Rel(client, backpack, "Vê e edita suas inscrições, dados pessoais e faz novas inscrições usando")
 System_Ext(email, "Sistema de E-mail", "O sistema de email interno SMTP do Google.")
