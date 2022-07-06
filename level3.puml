@@ -1,0 +1,85 @@
+@startuml Level3
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/mongodb.puml
+!include DEVICONS2/spring.puml
+!include FONTAWESOME/users.puml
+!include MATERIAL/mail.puml
+!include MATERIAL/collections_bookmark.puml
+!include MATERIAL/monetization_on.puml
+
+title Diagrama de componentes para o Sistema de Inscrições (Backpack)
+
+SHOW_PERSON_OUTLINE()
+LAYOUT_LEFT_RIGHT()
+
+Container(spa, "SPA","Javascript e Angular", "Fornece todas as funcionalidades do backpack aos clientes por meio do navegador da web.", $sprite="angular")
+
+Container_Boundary(api, "Backpack API"){
+  Component(dash, "Controlador de Dashboard", "Spring MVC Rest Controller", "Oferecer aos clientes um resumo de suas inscrições.")
+  Component(atividades, "Controlador de Seleção Atividades", "Spring MVC Rest Controller", "Permite ao usuário adicionar/remover atividades em sua inscrição.")
+  Component(sucesso, "Controlador de Sucesso", "Spring MVC Rest Controller", "Oferecer aos clientes um resumo de sua inscrição finalizada com sucesso.")
+  Component(cpinsc, "Componente de Inscrições", "Spring Bean", "Fornece funcionalidades relacionadas as inscrições.", $sprite="spring")
+  Component(dp, "Controlador de Dados Pessoais", "Spring MVC Rest Controller", "Permite ao usuário informar seus dados pessoais.")
+  Component(cpcli, "Componente de Cliente", "Spring Bean", "Fornece funcionalidades relacionadas aos dados pessoais.", $sprite="spring")
+  Component(contato, "Controlador de Contato", "Spring MVC Rest Controller", "Permite ao usuário informar seus dados de contato incluindo endereço.")
+  Component(cpcont, "Componente de Contato", "Spring Bean", "Fornece funcionalidades relacionadas aos dados de contato.", $sprite="spring")
+  Component(documentos, "Controlador de Documentos", "Spring MVC Rest Controller", "Permite ao usuário anexar seus documentos.")
+  Component(cpdoc, "Componente de Documentos", "Spring Bean", "Fornece funcionalidades relacionadas aos documentos.", $sprite="spring")
+  Component(pagamento, "Controlador de Pagamento", "Spring MVC Rest Controller", "Permite ao usuário selecionar a forma de pagamento e efetuá-lo.")
+  Component(cppag, "Componente de Pagamento", "Spring Bean", "Fornece funcionalidades relacionadas ao pagamento.", $sprite="spring")
+  Component(dc, "Controlador de Dados Cadastrais", "Spring MVC Rest Controller", "Permite ao cliente visualizar e editar seu cadastro (dados pessoais, documentos e dados de contato).")
+
+  Component(cpemail, "Componente de E-mail", "Spring Bean", "Envia e-mail para os usuários.", $sprite="spring")
+  Component(cpfacadeedu, "Facade do sistema Educare", "Spring Bean", "Uma fachada para o sistema de Gestão Acadêmica (Educare).", $sprite="spring")
+  Component(cpfacadegn, "Facade do sistema GetNet", "Spring Bean", "Uma fachada para o sistema de Pagamentos (GetNet).", $sprite="spring")
+  Component(cpadapterk, "Adapter do cluster Kafka", "Spring Bean", "Um adapter para conexão com o cluster kafka.", $sprite="spring")
+
+  Rel(spa, dash, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, atividades, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, dp, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, contato, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, documentos, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, pagamento, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, sucesso, "Faz chamadas de API para", "JSON/HTTPS")
+  Rel(spa, dc, "Faz chamadas de API para", "JSON/HTTPS")
+
+  Rel(dash, cpinsc, "Usa")
+  Rel(atividades, cpinsc, "Usa")
+  Rel(sucesso, cpinsc, "Usa")
+  Rel(dp, cpcli, "Usa")
+  Rel(dc, cpcli, "Usa")
+  Rel(contato, cpcont, "Usa")
+  Rel(dc, cpcont, "Usa")
+  Rel(documentos, cpdoc, "Usa")
+  Rel(dc, cpdoc, "Usa")
+  Rel(pagamento, cppag, "Usa")
+  Rel(sucesso, cpemail, "Usa")
+  Rel(cppag, cpfacadeedu, "Usa")
+  Rel(cppag, cpfacadegn, "Usa")
+  Rel(cppag, cpadapterk, "Usa")
+  Rel(dc, cpadapterk, "Usa")
+}
+ContainerDb(db, "Banco de Dados", "MongoDB Schema", "Armazena informações de inscrições, dados pessoais, documentos e pagamentos.", $sprite="mongodb")
+Rel(cpinsc, db, "Lê e escreve em")
+Rel(cpcli, db, "Lê e escreve em")
+Rel(cpcont, db, "Lê e escreve em")
+Rel(cpdoc, db, "Lê e escreve em")
+Rel(cppag, db, "Lê e escreve em")
+
+System_Ext(email, "Sistema de E-mail", "O sistema de email interno SMTP do Google.", $sprite="mail")
+Rel(cpemail, email, "Envia e-mail usando", "SMTP")
+System_Ext(educare, "Sistema de Gestão Acadêmica (Educare)", "Armazena todas as informações cadastrais de inscrições a serem publicadas.", $sprite="collections_bookmark")
+Rel(cpfacadeedu, educare, "Faz chamadas de API para", "JSON/HTTPS")
+System_Ext(getnet, "Sistema de Pagamentos (GetNet)", "Gerenciador de pagamentos para a IES.", $sprite="monetization_on")
+Rel(cpfacadegn, getnet, "Faz chamadas de API para", "JSON/HTTPS")
+System_Ext(kafka, "Cluster Kafka", "Lida com eventos de domínio relacionados a Inscrições.")
+Rel(cpadapterk, kafka, "Publica/Consome eventos de", "JSON/HTTPS")
+@enduml
