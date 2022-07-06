@@ -11,6 +11,7 @@
 !include DEVICONS/mongodb.puml
 !include DEVICONS2/spring.puml
 !include FONTAWESOME/users.puml
+!include FONTAWESOME/project_diagram.puml
 !include MATERIAL/mail.puml
 !include MATERIAL/collections_bookmark.puml
 !include MATERIAL/monetization_on.puml
@@ -61,7 +62,7 @@ Container_Boundary(api, "Backpack API"){
   Rel(documentos, cpdoc, "Usa")
   Rel(dc, cpdoc, "Usa")
   Rel(pagamento, cppag, "Usa")
-  Rel(sucesso, cpemail, "Usa")
+  Rel(cpinsc, cpemail, "Usa")
   Rel(cppag, cpfacadeedu, "Usa")
   Rel(cppag, cpfacadegn, "Usa")
   Rel(cppag, cpadapterk, "Usa")
@@ -80,6 +81,6 @@ System_Ext(educare, "Sistema de Gestão Acadêmica (Educare)", "Armazena todas a
 Rel(cpfacadeedu, educare, "Faz chamadas de API para", "JSON/HTTPS")
 System_Ext(getnet, "Sistema de Pagamentos (GetNet)", "Gerenciador de pagamentos para a IES.", $sprite="monetization_on")
 Rel(cpfacadegn, getnet, "Faz chamadas de API para", "JSON/HTTPS")
-System_Ext(kafka, "Cluster Kafka", "Lida com eventos de domínio relacionados a Inscrições.")
+System_Ext(kafka, "Cluster Kafka", "Lida com eventos de domínio relacionados a Inscrições.", $sprite="project_diagram")
 Rel(cpadapterk, kafka, "Publica/Consome eventos de", "JSON/HTTPS")
 @enduml
