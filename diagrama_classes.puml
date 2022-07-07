@@ -1,0 +1,107 @@
+@startuml
+class Cliente {
+    - codigo : Long
+    - codigoAcademico : Long
+    - nome : String
+    - dataNascimento : Date
+    - genero : Genero
+    - necessidadeEspecial : Boolean
+    + Cliente(cliente : Cliente)
+}
+class Contato {
+    - codigo : Long
+    - email : String
+    - telefone : String
+    - cliente : Cliente
+    - endereco : Endereco 
+    + Contato(contato : Contato)
+}
+class Endereco {
+    - codigo : Long
+    - cep : Long
+    - cidade : String
+    - uf : Strinf
+    - pais : String
+    - rua : String
+    - numero : String
+    - complemento : String
+    - bairro : String
+    + Endereco(endereco : Endereco)
+}
+class Documento {
+    - codigo : Long
+    - cpf : String
+    - rg : String
+    - rne : String
+    - passaporte : String
+    - estrangeiro : Boolean
+    - anexos : List<DocumentoAnexo>
+    - cliente : Cliente
+    + Documento(documento : Documento)
+}
+class DocumentoAnexo {
+    - codigo : Long
+    - documento : Documento
+    - anexo : Blob
+    - nome : String
+    - tipo : String
+    - pagina : String
+    + DocumentoAnexo(documentoAnexo : DocumentoAnexo)
+}
+class Inscricao {
+    - codigo : Long
+    - etapa : Etapa
+    - nome : String
+    - local : String
+    - valor : BigDecimal
+    - dataInicial : Date
+    - dataFinal : Date
+    - atividades : List<InscricaoAtividade>
+    - tipoInscricao : TipoInscricao
+    - cliente : Cliente
+    + Inscricao(inscricao : Inscricao)
+}
+class InscricaoAtividade {
+    - codigo : Long
+    - inscricao : Inscricao
+    - codigoPrograma : Long
+    - nome : String
+    - assunto : String
+    - palestrante : String
+    - dataInicio : Date
+    - dataFim : Date
+    + InscricaoAtividade(inscricaoAtividade : InscricaoAtividade)
+}
+enum Etapa {
+    + SELECAO_ATIVIDADES {static}
+    + DADOS_PESSOAIS {static}
+    + CONTATO {static}
+    + DOCUMENTOS {static}
+    + PAGAMENTO {static}
+    + SUCESSO {static}
+    + valueOf(name : String) : Etapa {static}
+    + values() : Etapa[] {static}
+}
+enum TipoInscricao {
+    + VESTIBULAR {static}
+    + EVENTO {static}
+    + valueOf(name : String) : TipoInscricao {static}
+    + values() : TipoInscricao[] {static}
+}
+enum Genero {
+    + MASCULINO {static}
+    + FEMININO {static}
+    + valueOf(name : String) : Genero {static}
+    + values() : Genero[] {static}
+}
+
+Genero ..+ Cliente
+Contato --> "-endereco" Endereco
+Contato --> "-cliente" Cliente
+Documento --> "-cliente" Cliente
+Etapa ..+ Inscricao
+TipoInscricao ..+ Inscricao 
+Documento "1" *-- "many" DocumentoAnexo : contains
+Inscricao "1" *-- "many" InscricaoAtividade : contains
+Cliente "1" *-- "many" Inscricao : contains
+@enduml
